@@ -18,6 +18,8 @@ class Poligonos(Ponto2D):
         Ponto2D.__init__(self, origem[0], origem[1])
         self.num_vert = num_vert
         self.vertices = vertices
+        self.vel_x = 0
+        self.vel_y = 0
 
     def get_num_vert(self):
         return self.num_vert
@@ -27,6 +29,20 @@ class Poligonos(Ponto2D):
 
     def get_one_vertice(self, index):
         return self.vertices[index]
+
+    def get_vel_x(self):
+        return self.vel_x
+
+    def get_vel_y(self):
+        return self.vel_y
+
+    def atualiza_vel(self, v_x, v_y):
+        self.vel_x = v_x
+        self.vel_y = v_y
+
+    def parar(self):
+        self.vel_x = 0
+        self.vel_y = 0
 
     def __str__(self):
         return 'Objeto.origem: (' + str(self.get_x()) + ' ,' + str(self.get_y()) + ')\n' \
