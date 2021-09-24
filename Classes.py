@@ -36,17 +36,25 @@ class Poligonos(Ponto2D):
     def get_vel_y(self):
         return self.vel_y
 
-    def atualiza_vel(self, v_x, v_y):
+    '''def atualiza_vel_x(self, v_x):
         self.vel_x = v_x
-        self.vel_y = v_y
+
+    def atualiza_vel_y(self, v_y):
+        self.vel_y = v_y'''
+
+    def atualiza_pos_x(self, x):
+        self.x += x
+
+    def atualiza_pos_y(self, y):
+        self.y += y
 
     def parar(self):
         self.vel_x = 0
         self.vel_y = 0
 
     def __str__(self):
-        return 'Objeto.origem: (' + str(self.get_x()) + ' ,' + str(self.get_y()) + ')\n' \
-               'Objeto.n_Vert= ' + str(self.num_vert) + \
+        return 'Origem: (' + str(self.get_x()) + ' ,' + str(self.get_y()) + ')\n' \
+               'Numero de vertices= ' + str(self.num_vert) + \
                '\nVertices: ' + str(self.vertices)
 
 
