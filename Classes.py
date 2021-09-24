@@ -2,9 +2,9 @@ from math import pi
 
 
 class Ponto2D:
-    def __init__(self, x, y):
-        self.x = x
-        self.y = y
+    def __init__(self, coord):
+        self.x = coord[0]
+        self.y = coord[1]
 
     def get_x(self):
         return self.x
@@ -13,7 +13,19 @@ class Ponto2D:
         return self.y
 
     def get_par(self):
-        return [self.x, self.y]
+        return self.x, self.y
+
+    def __str__(self):
+        return str(self.get_par())
+
+
+class Vetor2D:
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+
+    def get_par(self):
+        return self.x, self.y
 
 
 class Funcs(Ponto2D):
@@ -42,11 +54,13 @@ class Matriz2x2:
         self.elementos = m
 
 
-class Poligonos(Ponto2D, Funcs):
-    def __init__(self, origem, num_vert, vertices):
-        Ponto2D.__init__(self, origem[0], origem[1])
+class Poligonos:
+    def __init__(self, org_dist, num_vert, vertices):
+        self.org_dist = Vetor2D(org_dist[0], org_dist[1])
         self.num_vert = num_vert
-        self.vertices = vertices
+        self.vertices = []
+        for i in range(len(vertices)):
+            self.vertices.append(Ponto2D(vertices[i]))
 
     def get_num_vert(self):
         return self.num_vert
@@ -58,20 +72,23 @@ class Poligonos(Ponto2D, Funcs):
         return self.vertices[index]
 
     def atualiza_pos_x(self, x):
-        self.x += x
+        self.org_dist.x += x
 
     def atualiza_pos_y(self, y):
-        self.y += y
+        self.org_dist.y += y
 
     def plot(self, tela: tuple):
         pass
 
     def __str__(self):
-        return 'Origem: ' + str(self.get_par()) + \
-               'Numero de vertices= ' + str(self.num_vert) + \
+        return 'org_dist: ' + str(self.org_dist.get_par()) + \
+               '\nNumero de vertices= ' + str(self.num_vert) + \
                '\nVertices: ' + str(self.vertices)
 
 
 # ----------------- Teste da classe ------------------
-# obj = Poligonos([1, 2], 3, ((4, 5), (5, 7), (8, 9)))
-# print(obj)
+'''tupladetuplas = [(4, 5), (5, 7), (8, 9)]
+obj = Poligonos([1, 2], 3, tupladetuplas)
+print(obj.vertices)
+print(obj)
+print(tupladetuplas)'''

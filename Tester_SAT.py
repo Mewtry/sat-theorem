@@ -8,13 +8,14 @@ pygame.init()
 largura = 640
 altura = 480
 
+vertices =
+
 pca = Poligonos([300, 200], 4, ((200, 400), (400, 400), (400, 200), (200, 200)))
 print(pca)
 
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Teste Separating Axis Theorem')
 relogio = pygame.time.Clock()
-print(tela.get_size())
 
 while True:
     relogio.tick(60)
