@@ -1,9 +1,5 @@
 from math import pi
 
-#teste nessa porra
-class Funcs:
-    pass
-
 
 class Ponto2D:
     def __init__(self, x, y):
@@ -17,17 +13,28 @@ class Ponto2D:
         return self.y
 
     def get_par(self):
-        return (self.x, self.y)
+        return [self.x, self.y]
 
 
-class Vetor2D(Ponto2D):
-    def __init__(self, v_x, v_y):
-        Ponto2D.__init__(self, v_x, v_y)
-
+class Funcs(Ponto2D):
     def diferenca_entre_pontos(self, a, b):
         self.x = a.x - b.x
         self.y = a.y - b.y
-        return self.get_par()
+
+    def soma_vetor_ao_ponto(self, a, b):
+        self.x = a.x + b.x
+        self.y = a.y + b.y
+
+    def subtrai_vetor_do_ponto(self, a, b):
+        self.x = a.x - b.x
+        self.y = a.y - b.y
+
+    def soma_vetores(self, a, b):
+        self.x = a.x + b.x
+        self.y = a.y + b.y
+
+    def subtrai_vetores(self):
+        pass
 
 
 class Matriz2x2:
@@ -35,7 +42,7 @@ class Matriz2x2:
         self.elementos = m
 
 
-class Poligonos(Ponto2D):
+class Poligonos(Ponto2D, Funcs):
     def __init__(self, origem, num_vert, vertices):
         Ponto2D.__init__(self, origem[0], origem[1])
         self.num_vert = num_vert
