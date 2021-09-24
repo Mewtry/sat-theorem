@@ -1,3 +1,10 @@
+from math import pi
+
+
+class Funcs:
+    pass
+
+
 class Ponto2D:
     def __init__(self, x, y):
         self.x = x
@@ -10,7 +17,22 @@ class Ponto2D:
         return self.y
 
     def get_par(self):
-        return [self.x, self.y]
+        return (self.x, self.y)
+
+
+class Vetor2D(Ponto2D):
+    def __init__(self, v_x, v_y):
+        Ponto2D.__init__(self, v_x, v_y)
+
+    def diferenca_entre_pontos(self, a, b):
+        self.x = a.x - b.x
+        self.y = a.y - b.y
+        return self.get_par()
+
+
+class Matriz2x2:
+    def __init__(self, m):
+        self.elementos = m
 
 
 class Poligonos(Ponto2D):
@@ -34,12 +56,11 @@ class Poligonos(Ponto2D):
     def atualiza_pos_y(self, y):
         self.y += y
 
-    def parar(self):
-        self.vel_x = 0
-        self.vel_y = 0
+    def plot(self, tela: tuple):
+        pass
 
     def __str__(self):
-        return 'Origem: (' + str(self.get_x()) + ' ,' + str(self.get_y()) + ')\n' \
+        return 'Origem: ' + str(self.get_par()) + \
                'Numero de vertices= ' + str(self.num_vert) + \
                '\nVertices: ' + str(self.vertices)
 

@@ -14,6 +14,7 @@ print(pca)
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Teste Separating Axis Theorem')
 relogio = pygame.time.Clock()
+print(tela.get_size())
 
 while True:
     relogio.tick(60)
@@ -37,6 +38,5 @@ while True:
         pca.atualiza_pos_y(-1)
 
     pygame.draw.polygon(tela, (255, 0, 0), pca.vertices)
-    pygame.draw.
     # pygame.draw.rect(tela, (255, 0, 0), (pca.x, pca.y, 40, 40))
     pygame.display.update()
