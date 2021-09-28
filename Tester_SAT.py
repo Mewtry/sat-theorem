@@ -11,7 +11,7 @@ vel = 4
 
 verticesA = ((100, 100), (-100, 100), (-100, -100), (100, -100))
 verticesB = ((100, -100), (-100, -100), (0, 100))
-poligonoA = Poligono((255, 0, 0), [200, 300], len(verticesA), verticesA)
+poligonoA = Poligono((255, 0, 0), [400, 500], len(verticesA), verticesA)
 poligonoB = Poligono((0, 0, 255), [400, 500], len(verticesB), verticesB)
 print(poligonoA.get_vertices_plot())
 
@@ -38,22 +38,22 @@ while True:
                     poligonoA.set_cor(255, 0, 0)
 
     if pygame.key.get_pressed()[K_RIGHT]:
-        poligonoA.atualiza_pos_x(vel)
+        poligonoB.atualiza_pos_x(vel)
     if pygame.key.get_pressed()[K_LEFT]:
-        poligonoA.atualiza_pos_x(-vel)
+        poligonoB.atualiza_pos_x(-vel)
     if pygame.key.get_pressed()[K_DOWN]:
-        poligonoA.atualiza_pos_y(vel)
+        poligonoB.atualiza_pos_y(vel)
     if pygame.key.get_pressed()[K_UP]:
-        poligonoA.atualiza_pos_y(-vel)
+        poligonoB.atualiza_pos_y(-vel)
 
     if pygame.key.get_pressed()[K_d]:
-        poligonoB.atualiza_pos_x(vel)
+        poligonoA.atualiza_pos_x(vel)
     if pygame.key.get_pressed()[K_a]:
-        poligonoB.atualiza_pos_x(-vel)
+        poligonoA.atualiza_pos_x(-vel)
     if pygame.key.get_pressed()[K_s]:
-        poligonoB.atualiza_pos_y(vel)
+        poligonoA.atualiza_pos_y(vel)
     if pygame.key.get_pressed()[K_w]:
-        poligonoB.atualiza_pos_y(-vel)
+        poligonoA.atualiza_pos_y(-vel)
 
     pygame.draw.polygon(tela, poligonoA.get_cor(), poligonoA.get_vertices_plot())
     pygame.draw.polygon(tela, poligonoB.get_cor(), poligonoB.get_vertices_plot())

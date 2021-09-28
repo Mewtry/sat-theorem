@@ -220,10 +220,12 @@ class Poligono:
                         bmax = dot
                     if bmin is None or dot < bmin:
                         bmin = dot
+
                 print(amin, amax, bmin, bmax)
+
                 # Identifica se há um gap entre os polígonos por este ângulo
-                if amin < bmax and amin > bmin or \
-                   bmin < amax and bmin > amin:
+                if amin <= bmax and amin >= bmin or \
+                   bmin <= amax and bmin >= amin:
                     print('Gap: NO')
                 else:
                     print('Gap: YES')
@@ -263,8 +265,8 @@ class Poligono:
                         bmin = dot
                 print(amin, amax, bmin, bmax)
                 # Identifica se há um gap entre os polígonos por este ângulo
-                if amin < bmax and amin > bmin or \
-                   bmin < amax and bmin > amin:
+                if amin <= bmax and amin >= bmin or \
+                   bmin <= amax and bmin >= amin:
                     print('Gap: NO')
                 else:
                     print('Gap: YES')
