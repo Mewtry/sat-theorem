@@ -23,17 +23,15 @@ class Ponto2D:
     def set_y(self, y):
         self.y = y
 
-    def subtrai_vetor_do_ponto(self, a, b):
-        if not (isinstance(a, Ponto2D) and isinstance(b, Vetor2D)):
+    def subtrai_vetor_do_ponto(self, a):
+        if not isinstance(a, Vetor2D):
             raise TypeError
-        self.x = a.x - b.x
-        self.y = a.y - b.y
+        return Ponto2D([self.x + a.x, self.y + a.y])
 
-    def soma_vetor_ao_ponto(self, a, b):
-        if not (isinstance(a, Ponto2D) and isinstance(b, Vetor2D)):
+    def soma_vetor_ao_ponto(self, a):
+        if not isinstance(a, Vetor2D):
             raise TypeError
-        self.x = a.x + b.x
-        self.y = a.y + b.y
+        return Ponto2D([self.x + a.x, self.y + a.y])
 
     def __str__(self):
         return str(self.get_par())
@@ -109,12 +107,16 @@ class Matriz2x2:
 
 # noinspection PyChainedComparisons
 class Poligono:
-    def __init__(self, org_dist, num_vert, vertices):
+    def __init__(self, cor, org_dist, num_vert, vertices):
         self.org_dist = Vetor2D(org_dist[0], org_dist[1])
         self.num_vert = num_vert
         self.vertices = []
+        self.cor = cor
         for i in range(len(vertices)):
             self.vertices.append(Ponto2D(vertices[i]))
+
+    def get_cor(self):
+        return self.cor
 
     def get_num_vert(self):
         return self.num_vert
@@ -124,11 +126,13 @@ class Poligono:
         for i in range(self.num_vert):
             pontos = [self.vertices[i].x, self.vertices[i].y]
             lista.append(pontos)
-
         return lista
 
     def get_one_vertice(self, index):
         return self.vertices[index]
+
+    def set_cor(self, r, g, b):
+        self.cor = (r, g, b)
 
     def atualiza_pos_x(self, x):
         self.org_dist.x += x
@@ -136,38 +140,46 @@ class Poligono:
     def atualiza_pos_y(self, y):
         self.org_dist.y += y
 
-    def plot(self, tela: tuple):
-        pass
+    def get_vertices_plot(self):
+        vertices_plot = []
+        for i in range(self.num_vert):
+            vertices_plot.append(self.vertices[i].soma_vetor_ao_ponto(self.org_dist).get_par())
+        return vertices_plot
+
+    def get_one_vertice_plot(self, index):
+        return self.vertices[index].soma_vetor_ao_ponto(self.org_dist)
 
     # Teste de intersecção de Axis Aligned Bounding Boxes. (AABB)
     def check_colisao(self, obj):
+        if not isinstance(obj, Poligono):
+            raise TypeError
         # Achando os pontos máximos e mínimos de X e Y para o primeiro Polígono
-        a_min = Ponto2D([self.get_one_vertice(0).x, self.get_one_vertice(0).y])
-        a_max = Ponto2D([self.get_one_vertice(0).x, self.get_one_vertice(0).y])
+        a_min = Ponto2D([self.get_one_vertice_plot(0).x, self.get_one_vertice_plot(0).y])
+        a_max = Ponto2D([self.get_one_vertice_plot(0).x, self.get_one_vertice_plot(0).y])
         for i in range(1, self.get_num_vert()):
-            if self.get_one_vertice(i).x < a_min.x:
-                a_min.set_x(self.get_one_vertice(i).x)
-            if self.get_one_vertice(i).y < a_min.y:
-                a_min.set_y(self.get_one_vertice(i).y)
+            if self.get_one_vertice_plot(i).x < a_min.x:
+                a_min.set_x(self.get_one_vertice_plot(i).x)
+            if self.get_one_vertice_plot(i).y < a_min.y:
+                a_min.set_y(self.get_one_vertice_plot(i).y)
 
-            if self.get_one_vertice(i).x > a_max.x:
-                a_max.set_x(self.get_one_vertice(i).x)
-            if self.get_one_vertice(i).y > a_max.y:
-                a_max.set_y(self.get_one_vertice(i).y)
+            if self.get_one_vertice_plot(i).x > a_max.x:
+                a_max.set_x(self.get_one_vertice_plot(i).x)
+            if self.get_one_vertice_plot(i).y > a_max.y:
+                a_max.set_y(self.get_one_vertice_plot(i).y)
 
         # Achando os pontos máximos e mínimos e X e Y para o segundo Polígono
-        b_min = Ponto2D([obj.get_one_vertice(0).x, obj.get_one_vertice(0).y])
-        b_max = Ponto2D([obj.get_one_vertice(0).x, obj.get_one_vertice(0).y])
+        b_min = Ponto2D([obj.get_one_vertice_plot(0).x, obj.get_one_vertice_plot(0).y])
+        b_max = Ponto2D([obj.get_one_vertice_plot(0).x, obj.get_one_vertice_plot(0).y])
         for i in range(1, obj.get_num_vert()):
-            if obj.get_one_vertice(i).x < b_min.x:
-                b_min.set_x(self.get_one_vertice(i).x)
-            if obj.get_one_vertice(i).y < b_min.y:
-                b_min.set_y(self.get_one_vertice(i).y)
+            if obj.get_one_vertice_plot(i).x < b_min.x:
+                b_min.set_x(self.get_one_vertice_plot(i).x)
+            if obj.get_one_vertice_plot(i).y < b_min.y:
+                b_min.set_y(self.get_one_vertice_plot(i).y)
 
-            if obj.get_one_vertice(i).x > b_max.x:
-                b_max.set_x(self.get_one_vertice(i).x)
-            if obj.get_one_vertice(i).y > b_max.y:
-                b_max.set_y(self.get_one_vertice(i).y)
+            if obj.get_one_vertice_plot(i).x > b_max.x:
+                b_max.set_x(self.get_one_vertice_plot(i).x)
+            if obj.get_one_vertice_plot(i).y > b_max.y:
+                b_max.set_y(self.get_one_vertice_plot(i).y)
 
         # Se falso, os polígonos não se colidem.
         # Caso verdadeiro, tem a possibilidade de estarem colidindo.
@@ -182,9 +194,9 @@ class Poligono:
                 aresta = Vetor2D(0, 0)
 
                 if not i+1 >= self.get_num_vert():
-                    aresta.diferenca_entre_pontos(self.get_one_vertice(i+1), self.get_one_vertice(i))
+                    aresta.diferenca_entre_pontos(self.get_one_vertice_plot(i+1), self.get_one_vertice_plot(i))
                 else:
-                    aresta.diferenca_entre_pontos(self.get_one_vertice(0), self.get_one_vertice(i))
+                    aresta.diferenca_entre_pontos(self.get_one_vertice_plot(0), self.get_one_vertice_plot(i))
 
                 aresta.rotaciona_vetor_90()
                 print(aresta)
@@ -195,7 +207,7 @@ class Poligono:
 
                 # Encontra os valores de min e max para o polígono A usando a nova aresta
                 for j in range(self.get_num_vert()):
-                    dot = aresta.produto_escalar(self.get_one_vertice(j))
+                    dot = aresta.produto_escalar(self.get_one_vertice_plot(j))
                     if amax is None or dot > amax:
                         amax = dot
                     if amin is None or dot < amin:
@@ -203,7 +215,7 @@ class Poligono:
 
                 # Encontra os valores de min e max para o polígono B usando a nova aresta
                 for j in range(obj.get_num_vert()):
-                    dot = aresta.produto_escalar(obj.get_one_vertice(j))
+                    dot = aresta.produto_escalar(obj.get_one_vertice_plot(j))
                     if bmax is None or dot > bmax:
                         bmax = dot
                     if bmin is None or dot < bmin:
@@ -222,9 +234,9 @@ class Poligono:
                 aresta = Vetor2D(0, 0)
 
                 if not i+1 >= obj.get_num_vert():
-                    aresta.diferenca_entre_pontos(obj.get_one_vertice(i+1), obj.get_one_vertice(i))
+                    aresta.diferenca_entre_pontos(obj.get_one_vertice_plot(i+1), obj.get_one_vertice_plot(i))
                 else:
-                    aresta.diferenca_entre_pontos(obj.get_one_vertice(0), obj.get_one_vertice(i))
+                    aresta.diferenca_entre_pontos(obj.get_one_vertice_plot(0), obj.get_one_vertice_plot(i))
 
                 aresta.rotaciona_vetor_90()
                 print(aresta)
@@ -236,7 +248,7 @@ class Poligono:
 
                 # Encontra os valores de min e max para o polígono A usando a nova aresta
                 for j in range(self.get_num_vert()):
-                    dot = aresta.produto_escalar(self.get_one_vertice(j))
+                    dot = aresta.produto_escalar(self.get_one_vertice_plot(j))
                     if amax is None or dot > amax:
                         amax = dot
                     if amin is None or dot < amin:
@@ -244,7 +256,7 @@ class Poligono:
 
                 # Encontra os valores de min e max para o polígono B usando a nova aresta
                 for j in range(obj.get_num_vert()):
-                    dot = aresta.produto_escalar(obj.get_one_vertice(j))
+                    dot = aresta.produto_escalar(obj.get_one_vertice_plot(j))
                     if bmax is None or dot > bmax:
                         bmax = dot
                     if bmin is None or dot < bmin:
@@ -275,22 +287,22 @@ class Poligono:
 # teste onde não colidem
 '''verticesA = ((13, 10), (13, 3), (6, 3), (6, 10))
 verticesB = ((14, 18), (15, 11), (10, 13))
-PoligonoA = Poligono([0, 0], len(verticesA), verticesA)
-PoligonoB = Poligono([0, 0], len(verticesB), verticesB)
+poligonoA = Poligono([0, 0], len(verticesA), verticesA)
+poligonoB = Poligono([0, 0], len(verticesB), verticesB)
 if PoligonoA.check_colisao(PoligonoB):
     print('Colide!!!')
 else:
     print('Não colide!!!')'''
 
 # teste onde colidem
-verticesA = ((11, 10), (11, 3), (4, 3), (4, 10))
+'''verticesA = ((11, 10), (11, 3), (4, 3), (4, 10))
 verticesB = ((13, 13), (8, 9), (7, 15))
-PoligonoA = Poligono([0, 0], len(verticesA), verticesA)
-PoligonoB = Poligono([0, 0], len(verticesB), verticesB)
+poligonoA = Poligono([0, 0], len(verticesA), verticesA)
+poligonoB = Poligono([0, 0], len(verticesB), verticesB)
 if PoligonoA.check_colisao(PoligonoB):
     print('Colide!!!')
 else:
-    print('Não colide!!!')
+    print('Não colide!!!')'''
 
 '''
 v1 = Vetor2D(0, 2)
