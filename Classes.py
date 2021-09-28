@@ -1,5 +1,6 @@
 from typing import *
 from math import sqrt, acos, pi
+import numpy as np
 
 
 class Ponto2D:
@@ -67,18 +68,18 @@ class Vetor2D:
         self.x = a.x - b.x
         self.y = a.y - b.y
 
-    def produto_escalar_ret_orig(self, escalar):
+    def produto_por_escalar(self, escalar):
         self.x *= escalar
         self.y *= escalar
 
-    def dot_product(self, a):
-        return self.x * a.x + self.y * a.y
+    def produto_escalar(self, v):
+        return np.array(self.get_par()) @ np.array(v.get_par())
 
-    def comprimento_vetor(self):
+    def modulo_vetor(self):
         return sqrt(pow(self.x, 2) + pow(self.y, 2))
 
     def normaliza_vetor(self):
-        c = self.comprimento_vetor()
+        c = self.modulo_vetor()
         self.x /= c
         self.y /= c
 
@@ -86,7 +87,13 @@ class Vetor2D:
         self.normaliza_vetor()
         if self.y > 0:
             return acos(self.x)
-        return acos(self.x) + pi
+        else:
+            return acos(self.x) + pi
+
+    def rotaciona_vetor_90(self):
+        a = self.x
+        self.x = self.y
+        self.y = -a
 
     def __str__(self):
         return str(self.get_par())
@@ -100,6 +107,7 @@ class Matriz2x2:
         return f'Matriz: {self.elementos[0]}\n        {self.elementos[1]}'
 
 
+# noinspection PyChainedComparisons
 class Poligono:
     def __init__(self, org_dist, num_vert, vertices):
         self.org_dist = Vetor2D(org_dist[0], org_dist[1])
@@ -131,42 +139,131 @@ class Poligono:
     def plot(self, tela: tuple):
         pass
 
+    # Teste de intersecção de Axis Aligned Bounding Boxes. (AABB)
     def check_colisao(self, obj):
-        # Primeiro teste de intersecção de Axis Aligned Bounding Boxes. (AABB)
-        min_a = Ponto2D([self.get_one_vertice(0).x, self.get_one_vertice(0).y])
-        max_a = Ponto2D([self.get_one_vertice(0).x, self.get_one_vertice(0).y])
+        # Achando os pontos máximos e mínimos de X e Y para o primeiro Polígono
+        a_min = Ponto2D([self.get_one_vertice(0).x, self.get_one_vertice(0).y])
+        a_max = Ponto2D([self.get_one_vertice(0).x, self.get_one_vertice(0).y])
         for i in range(1, self.get_num_vert()):
-            if self.get_one_vertice(i).x < min_a.x:
-                min_a.set_x(self.get_one_vertice(i).x)
-            if self.get_one_vertice(i).y < min_a.y:
-                min_a.set_y(self.get_one_vertice(i).y)
+            if self.get_one_vertice(i).x < a_min.x:
+                a_min.set_x(self.get_one_vertice(i).x)
+            if self.get_one_vertice(i).y < a_min.y:
+                a_min.set_y(self.get_one_vertice(i).y)
 
-            if self.get_one_vertice(i).x > max_a.x:
-                max_a.set_x(self.get_one_vertice(i).x)
-            if self.get_one_vertice(i).y > max_a.y:
-                max_a.set_y(self.get_one_vertice(i).y)
+            if self.get_one_vertice(i).x > a_max.x:
+                a_max.set_x(self.get_one_vertice(i).x)
+            if self.get_one_vertice(i).y > a_max.y:
+                a_max.set_y(self.get_one_vertice(i).y)
 
-        min_b = Ponto2D([obj.get_one_vertice(0).x, obj.get_one_vertice(0).y])
-        max_b = Ponto2D([obj.get_one_vertice(0).x, obj.get_one_vertice(0).y])
+        # Achando os pontos máximos e mínimos e X e Y para o segundo Polígono
+        b_min = Ponto2D([obj.get_one_vertice(0).x, obj.get_one_vertice(0).y])
+        b_max = Ponto2D([obj.get_one_vertice(0).x, obj.get_one_vertice(0).y])
         for i in range(1, obj.get_num_vert()):
-            if obj.get_one_vertice(i).x < min_b.x:
-                min_b.set_x(self.get_one_vertice(i).x)
-            if obj.get_one_vertice(i).y < min_b.y:
-                min_b.set_y(self.get_one_vertice(i).y)
+            if obj.get_one_vertice(i).x < b_min.x:
+                b_min.set_x(self.get_one_vertice(i).x)
+            if obj.get_one_vertice(i).y < b_min.y:
+                b_min.set_y(self.get_one_vertice(i).y)
 
-            if obj.get_one_vertice(i).x > max_b.x:
-                max_b.set_x(self.get_one_vertice(i).x)
-            if obj.get_one_vertice(i).y > max_b.y:
-                max_b.set_y(self.get_one_vertice(i).y)
+            if obj.get_one_vertice(i).x > b_max.x:
+                b_max.set_x(self.get_one_vertice(i).x)
+            if obj.get_one_vertice(i).y > b_max.y:
+                b_max.set_y(self.get_one_vertice(i).y)
 
-        if min_a.x < max_b.x and min_b.x < max_a.x and min_a.y < max_b.y and min_b.y < max_a.y:
+        # Se falso, os polígonos não se colidem.
+        # Caso verdadeiro, tem a possibilidade de estarem colidindo.
+        if a_min.x <= b_max.x and b_min.x <= a_max.x and \
+           a_min.y <= b_max.y and b_min.y <= a_max.y:
 
-            print('Há a possibilidade de estar colidindo')
-            print(min_a, max_a, min_b, max_b)
+            print('AABB não consegue concluir\nEntrando no SAT')
+            print(a_min, a_max, b_min, b_max)
+
+            # Testa usando as arestas do polígino A como referência
+            for i in range(self.get_num_vert()):
+                aresta = Vetor2D(0, 0)
+
+                if not i+1 >= self.get_num_vert():
+                    aresta.diferenca_entre_pontos(self.get_one_vertice(i+1), self.get_one_vertice(i))
+                else:
+                    aresta.diferenca_entre_pontos(self.get_one_vertice(0), self.get_one_vertice(i))
+
+                aresta.rotaciona_vetor_90()
+                print(aresta)
+                amax = None
+                amin = None
+                bmax = None
+                bmin = None
+
+                # Encontra os valores de min e max para o polígono A usando a nova aresta
+                for j in range(self.get_num_vert()):
+                    dot = aresta.produto_escalar(self.get_one_vertice(j))
+                    if amax is None or dot > amax:
+                        amax = dot
+                    if amin is None or dot < amin:
+                        amin = dot
+
+                # Encontra os valores de min e max para o polígono B usando a nova aresta
+                for j in range(obj.get_num_vert()):
+                    dot = aresta.produto_escalar(obj.get_one_vertice(j))
+                    if bmax is None or dot > bmax:
+                        bmax = dot
+                    if bmin is None or dot < bmin:
+                        bmin = dot
+                print(amin, amax, bmin, bmax)
+                # Identifica se há um gap entre os polígonos por este ângulo
+                if amin < bmax and amin > bmin or \
+                   bmin < amax and bmin > amin:
+                    print('Gap: NO')
+                else:
+                    print('Gap: YES')
+                    return False
+
+            # Testa usando as arestas do polígino B como referência
+            for i in range(obj.get_num_vert()):
+                aresta = Vetor2D(0, 0)
+
+                if not i+1 >= obj.get_num_vert():
+                    aresta.diferenca_entre_pontos(obj.get_one_vertice(i+1), obj.get_one_vertice(i))
+                else:
+                    aresta.diferenca_entre_pontos(obj.get_one_vertice(0), obj.get_one_vertice(i))
+
+                aresta.rotaciona_vetor_90()
+                print(aresta)
+
+                amax = None
+                amin = None
+                bmax = None
+                bmin = None
+
+                # Encontra os valores de min e max para o polígono A usando a nova aresta
+                for j in range(self.get_num_vert()):
+                    dot = aresta.produto_escalar(self.get_one_vertice(j))
+                    if amax is None or dot > amax:
+                        amax = dot
+                    if amin is None or dot < amin:
+                        amin = dot
+
+                # Encontra os valores de min e max para o polígono B usando a nova aresta
+                for j in range(obj.get_num_vert()):
+                    dot = aresta.produto_escalar(obj.get_one_vertice(j))
+                    if bmax is None or dot > bmax:
+                        bmax = dot
+                    if bmin is None or dot < bmin:
+                        bmin = dot
+                print(amin, amax, bmin, bmax)
+                # Identifica se há um gap entre os polígonos por este ângulo
+                if amin < bmax and amin > bmin or \
+                   bmin < amax and bmin > amin:
+                    print('Gap: NO')
+                else:
+                    print('Gap: YES')
+                    return False
+
+            return True
 
         else:
             print('Não está colidindo')
-            print(min_a, max_a, min_b, max_b)
+            print(a_min, a_max, b_min, b_max)
+            return False
 
     def __str__(self):
         return 'org_dist: ' + str(self.org_dist.get_par()) + \
@@ -175,22 +272,27 @@ class Poligono:
 
 
 # ----------------- Teste das classes ------------------
-tupladetuplas = ((0, 0), (0, 2), (2, 2), (2, 0))
-teste1 = Poligono([1, 1], len(tupladetuplas), tupladetuplas)
-print(teste1)
+# teste onde não colidem
+'''verticesA = ((13, 10), (13, 3), (6, 3), (6, 10))
+verticesB = ((14, 18), (15, 11), (10, 13))
+PoligonoA = Poligono([0, 0], len(verticesA), verticesA)
+PoligonoB = Poligono([0, 0], len(verticesB), verticesB)
+if PoligonoA.check_colisao(PoligonoB):
+    print('Colide!!!')
+else:
+    print('Não colide!!!')'''
 
-vert = ((2, 0), (2, 2), (4, 2), (4, 0))
-teste2 = Poligono([2, 1], len(vert), vert)
-print(teste2)
+# teste onde colidem
+verticesA = ((11, 10), (11, 3), (4, 3), (4, 10))
+verticesB = ((13, 13), (8, 9), (7, 15))
+PoligonoA = Poligono([0, 0], len(verticesA), verticesA)
+PoligonoB = Poligono([0, 0], len(verticesB), verticesB)
+if PoligonoA.check_colisao(PoligonoB):
+    print('Colide!!!')
+else:
+    print('Não colide!!!')
 
-teste1.check_colisao(teste2)
-
-
-
-# m = Matriz2x2([1, 2, 3, 4])
-# print(m)
 '''
-v= Vetor2D(0, 0)
-a = Ponto2D([4, 4])
-b = Ponto2D([1, 1])
-print(v)'''
+v1 = Vetor2D(0, 2)
+v2 = Vetor2D(2, 0)
+d = v1.produto_escalar(v2)'''
