@@ -131,8 +131,8 @@ class Poligono:
     def get_one_vertice(self, index):
         return self.vertices[index]
 
-    def set_cor(self, r, g, b):
-        self.cor = (r, g, b)
+    def set_cor(self, cor):
+        self.cor = cor
 
     def atualiza_pos_x(self, x):
         self.org_dist.x += x
@@ -186,8 +186,8 @@ class Poligono:
         if a_min.x <= b_max.x and b_min.x <= a_max.x and \
            a_min.y <= b_max.y and b_min.y <= a_max.y:
 
-            print('AABB não consegue concluir\nEntrando no SAT')
-            print(a_min, a_max, b_min, b_max)
+            # print('AABB não consegue concluir\nEntrando no SAT')
+            # print(a_min, a_max, b_min, b_max)
 
             # Testa usando as arestas do polígino A como referência
             for i in range(self.get_num_vert()):
@@ -199,7 +199,7 @@ class Poligono:
                     aresta.diferenca_entre_pontos(self.get_one_vertice_plot(0), self.get_one_vertice_plot(i))
 
                 aresta.rotaciona_vetor_90()
-                print(aresta)
+                # print(aresta)
                 amax = None
                 amin = None
                 bmax = None
@@ -221,14 +221,10 @@ class Poligono:
                     if bmin is None or dot < bmin:
                         bmin = dot
 
-                print(amin, amax, bmin, bmax)
+                # print(amin, amax, bmin, bmax)
 
                 # Identifica se há um gap entre os polígonos por este ângulo
-                if amin <= bmax and amin >= bmin or \
-                   bmin <= amax and bmin >= amin:
-                    print('Gap: NO')
-                else:
-                    print('Gap: YES')
+                if (amin > bmax or amin < bmin) and (bmin > amax or bmin < amin):
                     return False
 
             # Testa usando as arestas do polígino B como referência
@@ -241,7 +237,7 @@ class Poligono:
                     aresta.diferenca_entre_pontos(obj.get_one_vertice_plot(0), obj.get_one_vertice_plot(i))
 
                 aresta.rotaciona_vetor_90()
-                print(aresta)
+                # print(aresta)
 
                 amax = None
                 amin = None
@@ -263,20 +259,18 @@ class Poligono:
                         bmax = dot
                     if bmin is None or dot < bmin:
                         bmin = dot
-                print(amin, amax, bmin, bmax)
+
+                # print(amin, amax, bmin, bmax)
+
                 # Identifica se há um gap entre os polígonos por este ângulo
-                if amin <= bmax and amin >= bmin or \
-                   bmin <= amax and bmin >= amin:
-                    print('Gap: NO')
-                else:
-                    print('Gap: YES')
+                if (amin > bmax or amin < bmin) and (bmin > amax or bmin < amin):
                     return False
 
             return True
 
         else:
-            print('Não está colidindo')
-            print(a_min, a_max, b_min, b_max)
+            # print('Não está colidindo')
+            # print(a_min, a_max, b_min, b_max)
             return False
 
     def __str__(self):
