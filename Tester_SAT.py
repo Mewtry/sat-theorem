@@ -18,6 +18,10 @@ verticesB = ((100, -100), (-100, -100), (0, 100))
 poligonoA = Poligono(cor_pol_A, [400, 500], len(verticesA), verticesA)
 poligonoB = Poligono(cor_pol_B, [400, 500], len(verticesB), verticesB)
 
+poligonos = [poligonoA, poligonoB]
+
+bg = pygame.image.load("plano-cartesiano-g.jpg")
+bg = pygame.transform.scale(bg, (largura, altura))
 
 tela = pygame.display.set_mode((largura, altura))
 pygame.display.set_caption('Teste Separating Axis Theorem')
@@ -25,7 +29,7 @@ relogio = pygame.time.Clock()
 
 while True:
     relogio.tick(60)
-    tela.fill((0, 0, 0))
+    tela.blit(bg, (0, 0))
 
     for event in pygame.event.get():
         if event.type == QUIT:
@@ -62,7 +66,6 @@ while True:
     else:
         poligonoA.set_cor(cor_pol_A)
         # poligonoB.set_cor(cor_pol_B)
-
     pygame.draw.polygon(tela, poligonoA.get_cor(), poligonoA.get_vertices_plot())
     pygame.draw.polygon(tela, poligonoB.get_cor(), poligonoB.get_vertices_plot())
     pygame.display.update()
